@@ -1,0 +1,12 @@
+{
+    "Nodes": [{
+        "Id": "1",
+        "Company": "Company 1",
+        "Address": "Address 1",
+        "LightBrightnesses": "46",
+        "MaxBrightness": "100",
+        "MinBrightness": "0",
+        "Errors": "0x0002",
+        "LastUpdate": "2022-01-01T00:00:00.000Z"
+    }]
+}

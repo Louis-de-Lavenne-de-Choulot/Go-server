@@ -17,6 +17,7 @@ var logmutex sync.Mutex
 
 type infos struct {
 	Version string
+	Nodes   string
 }
 
 func main() {
@@ -29,8 +30,14 @@ func main() {
 		templates.New("index").Parse(readfile("./static/index.html"))
 		context := infos{
 			Version: Version,
+			Nodes:   GetNodes(),
 		}
-		templates.ExecuteTemplate(w, "index", context)
+		err := templates.ExecuteTemplate(w, "index", context)
+		if err != nil {
+			println(err.Error())
+			loganswer(err.Error())
+			return
+		}
 		loganswer("index.html")
 	})
 

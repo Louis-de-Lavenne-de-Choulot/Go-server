@@ -1,26 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <title>APP-SOLU</title>
 </head>
+
 <body>
-    <h1>APP-SOLU</h1>
-    <p>App-Solu is a web application that allows you to manage your projects and tasks.</p>
-    <p>Version: {{.Version}}</p>
-    <form action="/api/downlink" method="POST">
-        <label for="frm_payload">Payload</label>
-        <input type="text" name="frm_payload" id="frm_payload">
-        <label for="f_port">Port</label>
-        <input type="text" name="f_port" id="f_port">
-        <label for="priority">Priority</label>
-        <input type="text" name="priority" id="priority">
-        <input type="submit" value="Submit">
-    </form>
+    <nav class="navbar navbar-expand-lg bg-dark">
+        <div class="container-fluid" style="justify-content: center;">
+            <a class="navbar-brand" href="#" style="display: flex;">
+                <h1>APP-SOLU</h1> v{{.Version}}
+            </a>
+        </div>
+    </nav>
 
+    <div style="text-align: -webkit-center;">
+        <h1>APP-SOLU</h1>
+        <p>App-Solu is a web application that allows you to manage your projects and tasks.</p>
+        <form action="/api/downlink" method="POST">
+            <label for="frm_payload">Payload</label>
+            <input type="text" name="frm_payload" id="frm_payload">
+            <label for="f_port">Port</label>
+            <input type="text" name="f_port" id="f_port">
+            <label for="priority">Priority</label>
+            <input type="text" name="priority" id="priority">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="container">
+        <div class="row" style="justify-content: center;">
+            <div class="col-sm-10" style="height: max-content;">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-group"><ul class="list-group list-group-horizontal" style="justify-content: center;"> 
+                            <li class="list-group-item">
+                                received_at
+                            </li>
+                            <li class="list-group-item">
+                                application_id
+                            </li>
+                            <li class="list-group-item">
+                                device_id
+                            </li>
+                            <li class="list-group-item">
+                                port,message
+                            </li>
+                            </ul>
+                            {{.Nodes}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .list-group-item {
+            width: -webkit-fill-available;
+            text-align: -webkit-center;
+        }
 
+    </style>
 </body>
 </html>

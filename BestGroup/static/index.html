@@ -37,19 +37,20 @@
             <div class="col-sm-10" style="height: max-content;">
                 <div class="card">
                     <div class="card-body">
-                        <ul class="list-group"><ul class="list-group list-group-horizontal" style="justify-content: center;"> 
-                            <li class="list-group-item">
-                                received_at
-                            </li>
-                            <li class="list-group-item">
-                                application_id
-                            </li>
-                            <li class="list-group-item">
-                                device_id
-                            </li>
-                            <li class="list-group-item">
-                                port,message
-                            </li>
+                        <ul class="list-group">
+                            <ul class="list-group list-group-horizontal" style="justify-content: center;">
+                                <li class="list-group-item">
+                                    received_at
+                                </li>
+                                <li class="list-group-item">
+                                    application_id
+                                </li>
+                                <li class="list-group-item">
+                                    device_id
+                                </li>
+                                <li class="list-group-item">
+                                    port,message
+                                </li>
                             </ul>
                             {{.Nodes}}
                         </ul>
@@ -64,6 +65,24 @@
             text-align: -webkit-center;
         }
 
+        .list-group-item .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgb(227, 227, 227);
+            color: rgb(58, 58, 58);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
+
+        .list-group-item:hover .tooltiptext {
+            visibility: visible;
+        }
     </style>
 </body>
+
 </html>

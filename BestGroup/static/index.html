@@ -94,7 +94,7 @@
         }
     </style>
 
-    <!-- <script>
+    <script>
         // We can get the token from the "access_token" query
         // param, available in the browsers "location" global
         const query = window.location.search.substring(1);
@@ -110,14 +110,13 @@
                 },
             })
             // //if response is null, then redirect to login page
-            // .then((response) => {
-            //     if (response.status === 401) {
-            //         window.location.href = "http://bestiaever.ml:8080/auth";
-            //     }
-            //     return response.json();
-            // })
-            // Parse the response as JSON
-            .then((res) => res.json())
+            .then((response) => {
+                console.log(response);
+                if (response.status === 401) {
+                    // window.location.href = "http://bestiaever.ml:8080/auth";
+                }
+                return response.json();
+            })
             .then((res) => {
                 // Once we get the response (which has many fields)
                 // Documented here: https://developer.github.com/v3/users/#get-the-authenticated-user
@@ -125,32 +124,38 @@
                 const nameNode = document.createTextNode(`Welcome, ${res.name}`);
                 document.body.appendChild(nameNode);
             });
-    </script> -->
+    </script>
     <script>
         async function updateRequest(url) {
-                setTimeout(async function () {
-                    await fetch(url, myInit)
-                        .then((response) => {
-                            //get new html from response
-                            return response.text();
-                        })
-                        .then((data) => {
-                            if (data != ""){
+            setTimeout(async function () {
+                await fetch(url, myInit)
+                    .then((response) => {
+                        //get new html from response
+                        return response.text();
+                    })
+                    .then((data) => {
+                        if (data != "" || data != "parameter 'date' not set") {
+                            if (data[0] == "<") {
                                 //get element by id "dynamic" and update content
                                 document.getElementById("dynamic").innerHTML = data;
                                 // update paramString with newest fChild id
-                                paramString = "/?date=" + document.getElementById("fChild").innerText;
+                                paramString = "/?date=" + document.getElementById("fChild")
+                                    .innerText;
                             }
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                    updateRequest(url);
-                }, 2000); 
-            }
+                        }
+                    })
+                    .catch(function (error) {
+                    });
+                updateRequest(url);
+            }, 2000);
+        }
         if (window.fetch) {
             var myHeaders = new Headers();
-            var paramsString = "/?date=" + document.getElementById("fChild").innerText;
+            if (document.getElementById("fChild") != undefined) {
+                var paramsString = "/?date=" + document.getElementById("fChild").innerText;
+            } else {
+                paramsString = "";
+            }
 
 
             var myInit = {
@@ -159,8 +164,8 @@
                 mode: 'cors',
                 cache: 'default',
             };
-        const callURL = 'http://bestiaever.ml:8080/api/update' + paramsString;
-        updateRequest(callURL);
+            const callURL = 'http://bestiaever.ml:8080/api/update' + paramsString;
+            updateRequest(callURL);
         }
     </script>
 </body>

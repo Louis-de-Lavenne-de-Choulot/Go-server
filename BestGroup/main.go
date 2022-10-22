@@ -61,6 +61,7 @@ func main() {
 	//init the json_handler package
 	InitJSON("end-nodes.json")
 	backup()
+	AuthSupport()
 	http.HandleFunc("/webhooks/post", PostService)
 	http.HandleFunc("/api/downlink", DownLink)
 	//handle /api/update and check if parameter "date" is set

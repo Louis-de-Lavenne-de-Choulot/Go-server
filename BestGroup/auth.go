@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -12,10 +13,10 @@ const (
 	clientSecret = "71a4215aa63f270ded272a0709495b1539c97f1c"
 )
 
-func AuthSuppor() {
-	httpClient := http.Client{}
+func AuthSupport() {
+	httpClient := &http.Client{}
 	// Create a new redirect route route
-	http.HandleFunc("/oauth/redirect", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/oauth/redirect/", func(w http.ResponseWriter, r *http.Request) {
 		// First, we need to get the value of the `code` query param
 		err := r.ParseForm()
 		if err != nil {
@@ -23,6 +24,10 @@ func AuthSuppor() {
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		code := r.FormValue("code")
+		//print all request
+		for key, value := range r.URL.Query() {
+			fmt.Println(key, value)
+		}
 
 		// Next, lets for the HTTP request to call the github oauth enpoint
 		// to get our access token
@@ -43,6 +48,13 @@ func AuthSuppor() {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		defer res.Body.Close()
+		//print all body
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "could not read HTTP response: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		fmt.Fprintf(os.Stdout, "response body: %s \n", body)
 
 		// Parse the request body into the `OAuthAccessResponse` struct
 		var t OAuthAccessResponse
@@ -53,8 +65,8 @@ func AuthSuppor() {
 
 		// Finally, send a response to redirect the user to the "welcome" page
 		// with the access token
-		w.Header().Set("Location", "/index.html?access_token="+t.AccessToken)
-		w.WriteHeader(http.StatusFound)
+		// w.Header().Set("Location", "/index.html?access_token="+t.AccessToken)
+		// w.WriteHeader(http.StatusFound)
 	})
 }
 

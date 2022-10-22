@@ -21,7 +21,9 @@ type infos struct {
 }
 
 func main() {
+
 	templates := template.New("index.html")
+
 	//handle / and give index.html
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		logrequest(r)
@@ -41,11 +43,29 @@ func main() {
 		loganswer("index.html")
 	})
 
+	//handlefunc that servs auth.html
+	http.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
+		//read the auth.html file then serve it
+		w.Header().Add("Content Type", "text/html")
+		//read the auth.html file then serve it
+		templates.New("auth").Parse(readfile("./static/auth.html"))
+		err := templates.ExecuteTemplate(w, "auth", nil)
+		if err != nil {
+			println(err.Error())
+			loganswer(err.Error())
+			return
+		}
+		loganswer("auth.html")
+	})
+
 	//init the json_handler package
 	InitJSON("end-nodes.json")
 	backup()
 	http.HandleFunc("/webhooks/post", PostService)
 	http.HandleFunc("/api/downlink", DownLink)
+	//handle /api/update and check if parameter "date" is set
+	ApiUpdate()
+
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		panic(err)

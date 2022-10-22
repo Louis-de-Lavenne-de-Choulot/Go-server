@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container-fluid" style="justify-content: center;">
-            <a class="navbar-brand" href="#" style="display: flex;">
+            <a class="navbar-brand" href="http://bestiaever.ml:8080/index.html" style="display: flex;">
                 <h1>APP-SOLU</h1> v{{.Version}}
             </a>
         </div>
@@ -37,7 +37,7 @@
             <div class="col-sm-10" style="height: max-content;">
                 <div class="card">
                     <div class="card-body">
-                        <ul class="list-group">
+                        <ul class="list-group" id="dynamic">
                             <ul class="list-group list-group-horizontal" style="justify-content: center;">
                                 <li class="list-group-item">
                                     received_at
@@ -65,6 +65,16 @@
             text-align: -webkit-center;
         }
 
+        @media (max-width: 968px) {
+            .card {
+                overflow: auto;
+            }
+
+            .card-body {
+                display: flex
+            }
+        }
+
         .list-group-item .tooltiptext {
             visibility: hidden;
             width: 120px;
@@ -83,6 +93,76 @@
             visibility: visible;
         }
     </style>
+
+    <!-- <script>
+        // We can get the token from the "access_token" query
+        // param, available in the browsers "location" global
+        const query = window.location.search.substring(1);
+        const token = query.split("access_token=")[1];
+
+        // Call the user info API using the fetch browser library
+        fetch("https://api.github.com/user", {
+                headers: {
+                    // This header informs the Github API about the API version
+                    Accept: "application/vnd.github.v3+json",
+                    // Include the token in the Authorization header
+                    Authorization: "token " + token,
+                },
+            })
+            // //if response is null, then redirect to login page
+            // .then((response) => {
+            //     if (response.status === 401) {
+            //         window.location.href = "http://bestiaever.ml:8080/auth";
+            //     }
+            //     return response.json();
+            // })
+            // Parse the response as JSON
+            .then((res) => res.json())
+            .then((res) => {
+                // Once we get the response (which has many fields)
+                // Documented here: https://developer.github.com/v3/users/#get-the-authenticated-user
+                // Write "Welcome <user name>" to the documents body
+                const nameNode = document.createTextNode(`Welcome, ${res.name}`);
+                document.body.appendChild(nameNode);
+            });
+    </script> -->
+    <script>
+        async function updateRequest(url) {
+                setTimeout(async function () {
+                    await fetch(url, myInit)
+                        .then((response) => {
+                            //get new html from response
+                            return response.text();
+                        })
+                        .then((data) => {
+                            if (data != ""){
+                                //get element by id "dynamic" and update content
+                                document.getElementById("dynamic").innerHTML = data;
+                                // update paramString with newest fChild id
+                                paramString = "/?date=" + document.getElementById("fChild").innerText;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    updateRequest(url);
+                }, 2000); 
+            }
+        if (window.fetch) {
+            var myHeaders = new Headers();
+            var paramsString = "/?date=" + document.getElementById("fChild").innerText;
+
+
+            var myInit = {
+                method: 'GET',
+                headers: myHeaders,
+                mode: 'cors',
+                cache: 'default',
+            };
+        const callURL = 'http://bestiaever.ml:8080/api/update' + paramsString;
+        updateRequest(callURL);
+        }
+    </script>
 </body>
 
 </html>

@@ -95,10 +95,8 @@
     </style>
 
     <script>
-        // We can get the token from the "access_token" query
-        // param, available in the browsers "location" global
-        const query = window.location.search.substring(1);
-        const token = query.split("access_token=")[1];
+        // get token from cookie
+        var token = document.cookie.split(';').filter((item) => item.trim().startsWith('token='))[0].split('=')[1];
 
         // Call the user info API using the fetch browser library
         fetch("https://api.github.com/user", {
@@ -111,9 +109,8 @@
             })
             // //if response is null, then redirect to login page
             .then((response) => {
-                console.log(response);
                 if (response.status === 401) {
-                    // window.location.href = "http://bestiaever.ml:8080/auth";
+                    window.location.href = "http://bestiaever.ml:8080/auth";
                 }
                 return response.json();
             })

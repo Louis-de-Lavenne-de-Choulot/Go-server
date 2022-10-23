@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 )
 
 const (
-	clientID     = "17d14971a346"
+	clientID     = "17d14971a346aceec8b2"
 	clientSecret = "71a4215aa63f270ded272a0709495b1539c97f1c"
 )
 
@@ -24,10 +24,7 @@ func AuthSupport() {
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		code := r.FormValue("code")
-		//print all request
-		for key, value := range r.URL.Query() {
-			fmt.Println(key, value)
-		}
+		println(code)
 
 		// Next, lets for the HTTP request to call the github oauth enpoint
 		// to get our access token
@@ -48,13 +45,6 @@ func AuthSupport() {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		defer res.Body.Close()
-		//print all body
-		body, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			fmt.Fprintf(os.Stdout, "could not read HTTP response: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-		fmt.Fprintf(os.Stdout, "response body: %s \n", body)
 
 		// Parse the request body into the `OAuthAccessResponse` struct
 		var t OAuthAccessResponse
@@ -62,11 +52,21 @@ func AuthSupport() {
 			fmt.Fprintf(os.Stdout, "could not parse JSON response: %v", err)
 			w.WriteHeader(http.StatusBadRequest)
 		}
+		println(t.AccessToken)
 
-		// Finally, send a response to redirect the user to the "welcome" page
-		// with the access token
-		// w.Header().Set("Location", "/index.html?access_token="+t.AccessToken)
-		// w.WriteHeader(http.StatusFound)
+		//set t.AccessToken as cookie
+		expiration := time.Now().Add(365 * 24 * time.Hour)
+		cookie := http.Cookie{Name: "token", Value: t.AccessToken, Expires: expiration, Path: "/"}
+		//if cookie token exists, delete it
+		if _, err := r.Cookie("token"); err == nil {
+			cookie.MaxAge = -1
+		}
+
+		//set cookie token
+		http.SetCookie(w, &cookie)
+		println("cookie set")
+		// //redirect to "/"
+		// http.Redirect(w, r, "/", http.StatusFound)
 	})
 }
 

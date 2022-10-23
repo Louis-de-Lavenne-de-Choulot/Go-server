@@ -68,7 +68,7 @@ func PostService(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//save the Nodes in end-nodes.json
-		err = SaveJSON("end-nodes.json")
+		err = SaveJSON("end-nodes.json", Nodes, Users{})
 		if err != nil {
 			loganswer("Error saving json")
 			println("Error saving json")

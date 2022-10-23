@@ -27,6 +27,17 @@ func main() {
 	//handle / and give index.html
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		logrequest(r)
+		//check if cookie "sessionID" exists else redirect to auth
+		cookie, err := r.Cookie("sessionID")
+		if err != nil {
+			http.Redirect(w, r, "/auth", http.StatusFound)
+			return
+		}
+		//check if cookie "sessionID" is equal to an existing session
+		if _, found := sessions[cookie.Value]; !found {
+			http.Redirect(w, r, "/auth", http.StatusFound)
+			return
+		}
 		w.Header().Add("Content Type", "text/html")
 		//read the index.html file then serve it
 		templates.New("index").Parse(readfile("./static/index.html"))
@@ -34,7 +45,7 @@ func main() {
 			Version: Version,
 			Nodes:   GetNodes(),
 		}
-		err := templates.ExecuteTemplate(w, "index", context)
+		err = templates.ExecuteTemplate(w, "index", context)
 		if err != nil {
 			println(err.Error())
 			loganswer(err.Error())
@@ -59,11 +70,13 @@ func main() {
 	})
 
 	//init the json_handler package
-	InitJSON("end-nodes.json")
+	InitJSON("end-nodes.json", true)
+	InitJSON("registeredUsers.json", false)
 	backup()
 	AuthSupport()
 	http.HandleFunc("/webhooks/post", PostService)
 	http.HandleFunc("/api/downlink", DownLink)
+	http.HandleFunc("/api/getuserinfos", GetUserInfos)
 	//handle /api/update and check if parameter "date" is set
 	ApiUpdate()
 

@@ -1,0 +1,41 @@
+{
+    "users": [
+        {
+            "Id": 1,
+            "Username": "",
+            "Gthb_identifier": "Louis-de-Lavenne-de-Choulot",
+            "Avatar_url": ""
+
+        },
+        {
+            "Id": 2,
+            "Username": "",
+            "Gthb_identifier": "ivan-molnar",
+            "Avatar_url": ""
+        },
+        {
+            "Id" : 3,
+            "Username": "",
+            "Gthb_identifier" : "maxbernard3",
+            "Avatar_url" : ""
+        },
+        {
+            "Id" : 4,
+            "Username": "",
+            "Gthb_identifier" : "Chaput-Mathieu",
+            "Avatar_url" : ""
+        },
+        {
+            "Id" : 5,
+            "Username": "",
+            "Gthb_identifier" : "arthur-lemo1ne",
+            "Avatar_url" : ""
+        },
+        {
+            "Id": 6,
+            "Username": "",
+            "Gthb_identifier": "JasonGROSSO",
+            "Avatar_url": ""
+        }
+    ]
+}

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const Version = "0.1"
+const Version = "0.2"
 
 var logfile string = "./server.log"
 var logmutex sync.Mutex

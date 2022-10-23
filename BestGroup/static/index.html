@@ -95,8 +95,11 @@
     </style>
 
     <script>
-        // get token from cookie
-        var token = document.cookie.split(';').filter((item) => item.trim().startsWith('token='))[0].split('=')[1];
+        var token = ""
+        if (document.cookie != "") {
+            // get token from cookie
+            token = document.cookie.split(';').filter((item) => item.trim().startsWith('token='))[0].split('=')[1];
+        }
 
         // Call the user info API using the fetch browser library
         fetch("https://api.github.com/user", {
@@ -141,8 +144,7 @@
                             }
                         }
                     })
-                    .catch(function (error) {
-                    });
+                    .catch(function (error) {});
                 updateRequest(url);
             }, 2000);
         }

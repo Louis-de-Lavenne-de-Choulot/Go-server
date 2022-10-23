@@ -24,7 +24,6 @@ func AuthSupport() {
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		code := r.FormValue("code")
-		println(code)
 
 		// Next, lets for the HTTP request to call the github oauth enpoint
 		// to get our access token
@@ -52,7 +51,6 @@ func AuthSupport() {
 			fmt.Fprintf(os.Stdout, "could not parse JSON response: %v", err)
 			w.WriteHeader(http.StatusBadRequest)
 		}
-		println(t.AccessToken)
 
 		//set t.AccessToken as cookie
 		expiration := time.Now().Add(365 * 24 * time.Hour)
@@ -65,8 +63,8 @@ func AuthSupport() {
 		//set cookie token
 		http.SetCookie(w, &cookie)
 		println("cookie set")
-		// //redirect to "/"
-		// http.Redirect(w, r, "/", http.StatusFound)
+		//redirect to "/"
+		http.Redirect(w, r, "/", http.StatusFound)
 	})
 }
 

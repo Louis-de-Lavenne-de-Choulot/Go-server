@@ -69,6 +69,20 @@ func main() {
 		loganswer("auth.html")
 	})
 
+	http.HandleFunc("/refused", func(w http.ResponseWriter, r *http.Request) {
+		//read the refused.html file then serve it
+		w.Header().Add("Content Type", "text/html")
+		//read the refused.html file then serve it
+		templates.New("refused").Parse(readfile("./static/refused.html"))
+		err := templates.ExecuteTemplate(w, "refused", nil)
+		if err != nil {
+			println(err.Error())
+			loganswer(err.Error())
+			return
+		}
+		loganswer("refused.html")
+	})
+
 	//init the json_handler package
 	InitJSON("end-nodes.json", true)
 	InitJSON("registeredUsers.json", false)

@@ -51,23 +51,28 @@ func ApiUpdate() {
 		logrequest(r)
 		//check if parameter "date" is set and if latest Nodes.Nodes[0].ReceivedAt date is newer
 		if r.URL.Query().Get("date") != "" {
-			//replace + by space in date
-			firstNode := Nodes.Nodes[len(Nodes.Nodes)-1].ReceivedAt.String()
-			firstNode = strings.Replace(firstNode, "+", " ", 1)
-			lastNode := Nodes.Nodes[0].ReceivedAt.String()
-			lastNode = strings.Replace(lastNode, "+", " ", 1)
-			if r.URL.Query().Get("date") != lastNode || r.URL.Query().Get("date") != firstNode {
-				//if set, return GetNodes() in body``
-				w.Write([]byte(GetNodes()))
-				loganswer("api/update")
+			if Nodes.Nodes != nil {
+				//replace + by space in date
+				firstNode := Nodes.Nodes[len(Nodes.Nodes)-1].ReceivedAt.String()
+				firstNode = strings.Replace(firstNode, "+", " ", 1)
+				lastNode := Nodes.Nodes[0].ReceivedAt.String()
+				lastNode = strings.Replace(lastNode, "+", " ", 1)
+				if r.URL.Query().Get("date") != lastNode || r.URL.Query().Get("date") != firstNode {
+					//if set, return GetNodes() in body``
+					w.Write([]byte(GetNodes()))
+					loganswer("api/update")
+				} else {
+					http.Error(w, "no new data", http.StatusNoContent)
+					loganswer("up to date")
+				}
 			} else {
-				http.Error(w, "no new data", http.StatusNoContent)
-				loganswer("up to date")
+				//if not set, return http error
+				http.Error(w, "parameter 'date' not set", http.StatusBadRequest)
+				loganswer("parameter 'date' not set")
 			}
 		} else {
-			//if not set, return http error
-			http.Error(w, "parameter 'date' not set", http.StatusBadRequest)
-			loganswer("parameter 'date' not set")
+			//return http status 200
+			w.WriteHeader(http.StatusOK)
 		}
 	})
 }

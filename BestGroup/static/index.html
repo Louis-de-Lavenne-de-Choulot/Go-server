@@ -66,6 +66,18 @@
         .list-group-item:hover .tooltiptext {
             visibility: visible;
         }
+
+        .admin-side {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        .admin-form {
+            display: grid;
+            justify-items: center;
+        }
     </style>
     <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container-fluid" style="justify-content: center;">
@@ -80,7 +92,6 @@
                     style="border-radius: 50%; width: 50px; height: 50px;">
                 <h6 id="username" style="margin-left: 10px;"></h6>
             </div>
-        </div>
     </nav>
 
 
@@ -93,6 +104,7 @@
     <div style="text-align: -webkit-center;">
         <h1>APP-SOLU</h1>
         <p>App-Solu is a web application that allows you to manage your projects and tasks.</p>
+        {{if ge .Rights 1}}
         <form action="/api/downlink" method="POST">
             <label for="frm_payload">Payload</label>
             <input type="text" name="frm_payload" id="frm_payload">
@@ -102,6 +114,7 @@
             <input type="text" name="priority" id="priority">
             <input type="submit" value="Submit">
         </form>
+        {{end}}
     </div>
     <div style="max-width: -webkit-fill-available;">
         <div class="row" style="justify-content: center;">
@@ -130,6 +143,26 @@
             </div>
         </div>
     </div>
+
+    {{if eq .Rights 777}}
+    <div class="admin-side">
+        <h2>Hello Admin</h2>
+        <form class="admin-form" action="/api/adduser" method="POST" style="display: grid;">
+            <div>
+                <label for="github_identifier">Github Identifier to add </label>
+                <input type="text" name="github_identifier" id="github_identifier">
+            </div>
+            <div>
+                <label for="rights">User rights</label>
+                <input type="text" name="rights" id="rights" value="0">
+            </div>
+            <input type="text" style="display: none;" name="user_addition_token"
+                value="C6AWX40IVUWSP3NcHciWvqZTa3N06RxR">
+            <input type="submit" value="Submit">
+        </form>
+
+    </div>
+    {{end}}
     <script>
         async function updateRequest(url) {
             setTimeout(async function () {

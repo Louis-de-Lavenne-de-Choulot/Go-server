@@ -24,6 +24,7 @@ type User struct {
 	Gthb_identifier string
 	Avatar_url      string
 	token           string
+	Rights          int
 }
 
 type Node struct {

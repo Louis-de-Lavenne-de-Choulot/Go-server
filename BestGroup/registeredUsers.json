@@ -4,38 +4,57 @@
             "Id": 1,
             "Username": "",
             "Gthb_identifier": "Louis-de-Lavenne-de-Choulot",
-            "Avatar_url": ""
-
+            "Avatar_url": "",
+            "Rights": 777
         },
         {
             "Id": 2,
             "Username": "",
             "Gthb_identifier": "ivan-molnar",
-            "Avatar_url": ""
+            "Avatar_url": "",
+            "Rights": 1
         },
         {
             "Id" : 3,
             "Username": "",
             "Gthb_identifier" : "maxbernard3",
-            "Avatar_url" : ""
+            "Avatar_url" : "",
+            "Rights" : 1
         },
         {
             "Id" : 4,
             "Username": "",
             "Gthb_identifier" : "Chaput-Mathieu",
-            "Avatar_url" : ""
+            "Avatar_url" : "",
+            "Rights" : 1
         },
         {
             "Id" : 5,
             "Username": "",
             "Gthb_identifier" : "arthur-lemo1ne",
-            "Avatar_url" : ""
+            "Avatar_url" : "",
+            "Rights" : 1
         },
         {
             "Id": 6,
             "Username": "",
             "Gthb_identifier": "JasonGROSSO",
-            "Avatar_url": ""
+            "Avatar_url": "",
+            "Rights": 1
+        },
+        {
+            "Id": 7,
+            "Username": "",
+            "Gthb_identifier": "Polonit",
+            "Avatar_url": "",
+            "Rights": 1
+        },
+        {
+            "Id": 8,
+            "Username": "",
+            "Gthb_identifier": "TheoDct",
+            "Avatar_url": "",
+            "Rights": 0
         }
     ]
 }

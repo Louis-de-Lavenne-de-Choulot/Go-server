@@ -12,12 +12,17 @@ import (
 
 const Version = "0.2"
 
-var logfile string = "./server.log"
-var logmutex sync.Mutex
+var (
+	logfile           string = "./server.log"
+	logmutex          sync.Mutex
+	UserAdditionToken = make(map[int]string)
+)
 
 type infos struct {
-	Version string
-	Nodes   string
+	Version         string
+	Nodes           string
+	Rights          int
+	UserAdditionTkn string
 }
 
 func main() {
@@ -41,9 +46,18 @@ func main() {
 		w.Header().Add("Content Type", "text/html")
 		//read the index.html file then serve it
 		templates.New("index").Parse(readfile("./static/index.html"))
+
+		//Get user to see the rights
+		user := GetSessionIDOwner(cookie.Value)
+		utk := ""
+		if _, found := UserAdditionToken[user.Id]; found {
+			utk = UserAdditionToken[user.Id]
+		}
 		context := infos{
-			Version: Version,
-			Nodes:   GetNodes(),
+			Version:         Version,
+			Nodes:           GetNodes(),
+			Rights:          user.Rights,
+			UserAdditionTkn: utk,
 		}
 		err = templates.ExecuteTemplate(w, "index", context)
 		if err != nil {
@@ -91,6 +105,7 @@ func main() {
 	http.HandleFunc("/webhooks/post", PostService)
 	http.HandleFunc("/api/downlink", DownLink)
 	http.HandleFunc("/api/getuserinfos", GetUserInfos)
+	http.HandleFunc("/api/adduser", AddUser)
 	//handle /api/update and check if parameter "date" is set
 	ApiUpdate()
 

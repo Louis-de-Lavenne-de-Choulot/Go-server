@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <style>
         .container-fluid {
             position: absolute;
@@ -20,6 +19,24 @@
         .list-group-item {
             width: -webkit-fill-available;
             text-align: -webkit-center;
+        }
+
+        .middle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .popup {
+            width: 50%;
+            height: 50%;
+            z-index: 1;
+            display: flex;
+            background-color: aliceblue;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-direction: column;
         }
 
         @media (max-width: 968px) {
@@ -65,6 +82,13 @@
             </div>
         </div>
     </nav>
+
+
+    <div id="popup-info" class="middle popup">
+        <h3>Reminder: A session last 30 minutes</h3>
+        <button onclick="document.getElementById('popup-info').style.display = 'none'"
+            class="btn btn-primary">Close</button>
+    </div>
 
     <div style="text-align: -webkit-center;">
         <h1>APP-SOLU</h1>

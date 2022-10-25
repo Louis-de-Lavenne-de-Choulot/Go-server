@@ -100,7 +100,7 @@ import "testing"
 // test base64tohex
 func TestBase64ToHex(t *testing.T) {
 	t.Run("convert base64 to hex", func(t *testing.T) {
-		got := base64ToHex("qqo=")
+		got := base64Toutf8("qqo=")
 		want := "aaaa"
 		if got != want {
 			t.Errorf("got %q, want %q", got, want)

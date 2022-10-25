@@ -109,11 +109,11 @@ func main() {
 	//handle /api/update and check if parameter "date" is set
 	ApiUpdate()
 
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/bestiaever.ml/fullchain.pem", "/etc/letsencrypt/live/bestiaever.ml/privkey.pem", nil)
 	if err != nil {
 		panic(err)
 	}
-	println("Server started on port 8080")
+	println("Server started on port https")
 }
 
 // [yyyy-mm-dd:hh-mm-ss-mmss] Recieved $URL with $METHOD
@@ -174,7 +174,16 @@ func readfile(path string) string {
 	return string(data)
 }
 
-func base64ToHex(b64 string) string {
+func base64Toutf8(b64 string) string {
+	//get base64 string and return utf8 string
+	decoded, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return err.Error()
+	}
+	return string(decoded)
+}
+
+func base64tohex(b64 string) string {
 	//get base64 string and return hex string
 	decoded, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil {

@@ -140,7 +140,7 @@ func ApiUpdate(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			//if not set, return http error
-			http.Error(w, "parameter 'date' not set", http.StatusBadRequest)
+			http.Error(w, "parameter 'date' not set", http.StatusAccepted)
 			loganswer("parameter 'date' not set")
 		}
 	} else {

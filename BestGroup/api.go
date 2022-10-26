@@ -27,7 +27,6 @@ func DownLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	current, _ := strconv.Atoi(r.FormValue("current"))
-	println(len(user.Files_permissions), current)
 	if len(user.Files_permissions) < current {
 		http.Error(w, "Modified Request", http.StatusUnauthorized)
 		loganswer("Modified Request")
@@ -42,10 +41,9 @@ func DownLink(w http.ResponseWriter, r *http.Request) {
 		if v.ID == keyID {
 			key = v.APIKey
 			wbksApp = v.WebhookAPI
+			break
 		}
 	}
-	println(key)
-	println(keyID)
 
 	// post to ttn what r contains
 	client := &http.Client{}
@@ -60,7 +58,6 @@ func DownLink(w http.ResponseWriter, r *http.Request) {
 	json := `{"downlinks":[{"f_port":` + r.FormValue("f_port") + `,"frm_payload":"` + frm_p + `","priority":"` + r.FormValue("priority") + `"}]}`
 
 	var req *http.Request
-
 	if len(Nodes[keyID].Nodes) > 0 {
 		req, err = http.NewRequest("POST", "https://eu1.cloud.thethings.network/api/v3/as/applications/"+Nodes[keyID].Nodes[0].EndDeviceIds.ApplicationIds.ApplicationID+"/webhooks/"+wbksApp+"/devices/"+Nodes[keyID].Nodes[0].EndDeviceIds.DeviceID+"/down/push", bytes.NewBuffer([]byte(json)))
 		if err != nil {
@@ -109,6 +106,13 @@ func ApiUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	//check user id
 	user := GetSessionIDOwner(cookie.Value)
+
+	//check if parameter "current" is set
+	if r.FormValue("current") == "" {
+		http.Error(w, "current not set", http.StatusBadRequest)
+		loganswer("current not set")
+		return
+	}
 	current, _ := strconv.Atoi(r.FormValue("current"))
 	if len(user.Files_permissions) <= current {
 		http.Error(w, "Modified Request", http.StatusUnauthorized)

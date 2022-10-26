@@ -128,7 +128,9 @@ func GetUser(token string) (bool, User) {
 	}
 	count := 0
 	for _, user := range UsersI.Users {
+		println(user.Id, t["login"], user.Gthb_identifier)
 		if t["login"] != nil && user.Gthb_identifier == t["login"].(string) {
+			println("accepted")
 			//if username is "" then take t["name"].(string)
 			if user.Username == "" && t["name"] != nil {
 				UsersI.Users[count].Username = t["name"].(string)

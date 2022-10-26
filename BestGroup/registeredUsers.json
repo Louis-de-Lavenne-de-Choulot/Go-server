@@ -1,88 +1,80 @@
 {
     "users": [{
-            "Id": 1,
-            "Username": "",
-            "Gthb_identifier": "Louis-de-Lavenne-de-Choulot",
-            "Avatar_url": "",
-            "Rights": 777,
-            "Files_permissions": [0, 1]
-        },
-        {
-            "Id": 2,
-            "Username": "",
-            "Gthb_identifier": "ivan-molnar",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [0]
-        },
-        {
-            "Id": 3,
-            "Username": "",
-            "Gthb_identifier": "maxbernard3",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [0]
-        },
-        {
-            "Id": 4,
-            "Username": "",
-            "Gthb_identifier": "Chaput-Mathieu",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [0]
-        },
-        {
-            "Id": 5,
-            "Username": "",
-            "Gthb_identifier": "arthur-lemo1ne",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [0]
-        },
-        {
-            "Id": 6,
-            "Username": "",
-            "Gthb_identifier": "JasonGROSSO",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [0]
-        },
-        {
-            "Id": 7,
-            "Username": "",
-            "Gthb_identifier": "Clementine951",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [1]
-        },
-        {
-            "Id": 8,
-            "Username": "",
-            "Gthb_identifier": "TheoDct",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [1]
-        },
-        {
-            "Id": 9,
-            "Username": "ClementCaton",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [1]
-        },
-        {
-            "Id": 10,
-            "Username": "Malo-Archimbaud",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [1]
-        },
-        {
-            "Id": 11,
-            "Username": "Polonit",
-            "Avatar_url": "",
-            "Rights": 1,
-            "Files_permissions": [1]
-        }
-    ]
+        "Id": 1,
+        "Username": "Louis de Lavenne de Choulot",
+        "Gthb_identifier": "Louis-de-Lavenne-de-Choulot",
+        "Avatar_url": "https://avatars.githubusercontent.com/u/71769482?v=4",
+        "Rights": 777,
+        "Files_permissions": [0, 1]
+    }, {
+        "Id": 2,
+        "Username": "",
+        "Gthb_identifier": "ivan-molnar",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [0]
+    }, {
+        "Id": 3,
+        "Username": "",
+        "Gthb_identifier": "maxbernard3",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [0]
+    }, {
+        "Id": 4,
+        "Username": "Chaput-Mathieu",
+        "Gthb_identifier": "Chaput-Mathieu",
+        "Avatar_url": "https://avatars.githubusercontent.com/u/91249628?v=4",
+        "Rights": 1,
+        "Files_permissions": [0]
+    }, {
+        "Id": 5,
+        "Username": "",
+        "Gthb_identifier": "arthur-lemo1ne",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [0]
+    }, {
+        "Id": 6,
+        "Username": "",
+        "Gthb_identifier": "JasonGROSSO",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [0]
+    }, {
+        "Id": 7,
+        "Username": "ClementineCurel",
+        "Gthb_identifier": "Clementine951",
+        "Avatar_url": "https://avatars.githubusercontent.com/u/78617457?v=4",
+        "Rights": 1,
+        "Files_permissions": [1]
+    }, {
+        "Id": 8,
+        "Username": "TheoDct",
+        "Gthb_identifier": "TheoDct",
+        "Avatar_url": "https://avatars.githubusercontent.com/u/91249762?v=4",
+        "Rights": 1,
+        "Files_permissions": [1]
+    }, {
+        "Id": 9,
+        "Username": "",
+        "Gthb_identifier": "ClementCaton",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [1]
+    }, {
+        "Id": 10,
+        "Username": "",
+        "Gthb_identifier": "Malo-Archimbaud",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [1]
+    }, {
+        "Id": 11,
+        "Username": "",
+        "Gthb_identifier": "Polonit",
+        "Avatar_url": "",
+        "Rights": 1,
+        "Files_permissions": [1]
+    }]
 }

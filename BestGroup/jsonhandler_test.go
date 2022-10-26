@@ -8,7 +8,7 @@ var Json string = "test.json"
 
 func TestInitJSON(t *testing.T) {
 	t.Run("TestInitJSON", func(t *testing.T) {
-		err := InitJSON(Json, true)
+		err := InitJSON(Json, 0)
 		//if Players is empty, then the test fails
 		if err != nil {
 			t.Errorf("Error in InitJSON, %v", err)

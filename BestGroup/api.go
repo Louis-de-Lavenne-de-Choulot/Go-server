@@ -3,13 +3,50 @@ package main
 import (
 	"bytes"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
 
 func DownLink(w http.ResponseWriter, r *http.Request) {
-	key := os.Getenv("API_KEY")
+	logrequest(r)
+
+	//get cookie and check if user is logged in
+	cookie, err := r.Cookie("sessionID")
+	if err != nil {
+		http.Error(w, "not logged in", http.StatusUnauthorized)
+		loganswer("not logged in")
+		return
+	}
+
+	//check user id
+	user := GetSessionIDOwner(cookie.Value)
+	//check if parameter "current" is set
+	if r.FormValue("current") == "" {
+		http.Error(w, "current not set", http.StatusBadRequest)
+		loganswer("current not set")
+		return
+	}
+	current, _ := strconv.Atoi(r.FormValue("current"))
+	println(len(user.Files_permissions), current)
+	if len(user.Files_permissions) < current {
+		http.Error(w, "Modified Request", http.StatusUnauthorized)
+		loganswer("Modified Request")
+		return
+	}
+
+	// key := os.Getenv("API_KEY")
+	keyID := user.Files_permissions[current]
+	key := ""
+	wbksApp := ""
+	for _, v := range NodesFiles.EndNodes {
+		if v.ID == keyID {
+			key = v.APIKey
+			wbksApp = v.WebhookAPI
+		}
+	}
+	println(key)
+	println(keyID)
+
 	// post to ttn what r contains
 	client := &http.Client{}
 	//encode r.FormValue("frm_payload") if error return
@@ -18,11 +55,26 @@ func DownLink(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "can't encode frm_payload", http.StatusBadRequest)
 		return
 	}
-	json := `{"downlinks":[{"f_port":` + r.FormValue("f_port") + `,"frm_payload":"` + frm_p + `","priority":"NORMAL"}]}`
-	println(json)
-	req, err := http.NewRequest("POST", "https://eu1.cloud.thethings.network/api/v3/as/applications/algosup-group8-v1/webhooks/app-solu/devices/eui-2cf7f1202490140b/down/push", bytes.NewBuffer([]byte(json)))
-	if err != nil {
-		println("Error creating request")
+
+	//create json
+	json := `{"downlinks":[{"f_port":` + r.FormValue("f_port") + `,"frm_payload":"` + frm_p + `","priority":"` + r.FormValue("priority") + `"}]}`
+
+	var req *http.Request
+
+	if len(Nodes[keyID].Nodes) > 0 {
+		req, err = http.NewRequest("POST", "https://eu1.cloud.thethings.network/api/v3/as/applications/"+Nodes[keyID].Nodes[0].EndDeviceIds.ApplicationIds.ApplicationID+"/webhooks/"+wbksApp+"/devices/"+Nodes[keyID].Nodes[0].EndDeviceIds.DeviceID+"/down/push", bytes.NewBuffer([]byte(json)))
+		if err != nil {
+			println("Error creating request")
+		}
+	} else if r.FormValue("dev_id") != "" {
+		req, err = http.NewRequest("POST", "https://eu1.cloud.thethings.network/api/v3/as/applications/"+r.FormValue("app_id")+"/webhooks/"+wbksApp+"/devices/"+r.FormValue("dev_id")+"/down/push", bytes.NewBuffer([]byte(json)))
+		if err != nil {
+			println("Error creating request")
+		}
+	} else {
+		http.Error(w, "no device id and/or app id", http.StatusBadRequest)
+		loganswer("no deviceid  and/or app id")
+		return
 	}
 
 	req.Header.Add("Authorization", "Bearer "+key)
@@ -47,41 +99,56 @@ func DownLink(w http.ResponseWriter, r *http.Request) {
 }
 
 // check for update in dynamic mode, uses date which needs to be changed for ID
-func ApiUpdate() {
-	http.HandleFunc("/api/update/", func(w http.ResponseWriter, r *http.Request) {
-		logrequest(r)
-		//check if parameter "date" is set and if latest Nodes.Nodes[0].ReceivedAt date is newer
-		if r.URL.Query().Get("date") != "" {
-			if Nodes.Nodes != nil {
-				//replace + by space in date
-				firstNode := Nodes.Nodes[len(Nodes.Nodes)-1].ReceivedAt.String()
-				firstNode = strings.Replace(firstNode, "+", " ", 1)
-				lastNode := Nodes.Nodes[0].ReceivedAt.String()
-				lastNode = strings.Replace(lastNode, "+", " ", 1)
-				if r.URL.Query().Get("date") != lastNode || r.URL.Query().Get("date") != firstNode {
-					//if set, return GetNodes() in body``
-					w.Write([]byte(GetNodes()))
-					loganswer("api/update")
-				} else {
-					http.Error(w, "no new data", http.StatusNoContent)
-					loganswer("up to date")
-				}
+func ApiUpdate(w http.ResponseWriter, r *http.Request) {
+	//get cookie and check get user id
+	cookie, err := r.Cookie("sessionID")
+	if err != nil {
+		http.Error(w, "not logged in", http.StatusUnauthorized)
+		loganswer("not logged in")
+		return
+	}
+	//check user id
+	user := GetSessionIDOwner(cookie.Value)
+	current, _ := strconv.Atoi(r.FormValue("current"))
+	if len(user.Files_permissions) <= current {
+		http.Error(w, "Modified Request", http.StatusUnauthorized)
+		loganswer("Modified Request")
+		return
+	}
+
+	id := user.Files_permissions[current]
+	logrequest(r)
+	//check if parameter "date" is set and if latest Nodes.Nodes[0].ReceivedAt date is newer
+	if r.URL.Query().Get("date") != "" {
+		if Nodes[id].Nodes != nil {
+			//replace + by space in date
+			firstNode := Nodes[id].Nodes[len(Nodes[id].Nodes)-1].ReceivedAt.String()
+			firstNode = strings.Replace(firstNode, "+", " ", 1)
+			lastNode := Nodes[id].Nodes[0].ReceivedAt.String()
+			lastNode = strings.Replace(lastNode, "+", " ", 1)
+			if r.URL.Query().Get("date") != lastNode || r.URL.Query().Get("date") != firstNode {
+				//if set, return GetNodes() in body``
+				w.Write([]byte(GetNodes(user.Files_permissions)))
+				loganswer("api/update")
 			} else {
-				//if not set, return http error
-				http.Error(w, "parameter 'date' not set", http.StatusBadRequest)
-				loganswer("parameter 'date' not set")
+				http.Error(w, "no new data", http.StatusNoContent)
+				loganswer("up to date")
 			}
 		} else {
-			//return http status 200
-			w.WriteHeader(http.StatusOK)
+			//if not set, return http error
+			http.Error(w, "parameter 'date' not set", http.StatusBadRequest)
+			loganswer("parameter 'date' not set")
 		}
-	})
+	} else {
+		//return http status 200
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
 	logrequest(r)
 	//get cookie and check if user is logged in as admin
-	cookie, err := r.Cookie("session")
+	cookie, err := r.Cookie("sessionID")
 	if err != nil {
 		http.Error(w, "not logged in", http.StatusUnauthorized)
 		loganswer("not logged in")
@@ -89,7 +156,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 	//check if user is admin
 	user := GetSessionIDOwner(cookie.Value)
-	if user == (User{}) {
+	if user.Gthb_identifier != "" {
 		http.Error(w, "not logged in", http.StatusUnauthorized)
 		loganswer("not logged in")
 		return
@@ -121,10 +188,9 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 				//if yes, add user to UsersI.Users
 				UsersI.Users = append(UsersI.Users, User{Gthb_identifier: r.FormValue("github_identifier"), Rights: rights})
 				//save UsersI.Users
-				SaveJSON("registeredUsers.json", AutoGenerated{}, UsersI)
-				//return http status 200
-				w.WriteHeader(http.StatusOK)
+				SaveJSON("registeredUsers.json", AutoGenerated{}, UsersI, NodesI{})
 				loganswer("user added")
+				http.Redirect(w, r, "/", http.StatusOK)
 				return
 			} else {
 				http.Error(w, "wrong token", http.StatusBadRequest)

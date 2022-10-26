@@ -1,1 +1,18 @@
-{}
+{
+    "EndNodes": [
+        {
+            "Name": "algosup-group8-v1",
+            "FileHash": "23R4GREFCFVG54VZG54235FT4G6M",
+            "APIKey": "NNSXS.TZ4VIEWSAHXUFW3OSSCJ77X3BR3XPSSDTBXD7KA.BZ7SUV5SU3EUFV6VDOPAR2NFNI6KJ5XOBFBEKPFYQWOEFHRUDSKQ",
+            "WebhookAPI": "app-solu",
+            "ID": "0"
+        },
+        {
+            "Name": "signage-group-5-algosup",
+            "FileHash": "BpLnfgDsc3WD9F3qNfHK6a95jjJkwzDk",
+            "APIKey": "NNSXS.GBR2Z3OJD6UX4AX54IWUB4GWYI6BXDJBA4YWPHQ.2RFGEPRZPVIKVCQSE2K7X35VSREJDMSJBMLQNCPZ6RIDQQOZMQ3A",
+            "WebhookAPI": "a-special-webhook",
+            "ID": "1"
+        }
+    ]
+}

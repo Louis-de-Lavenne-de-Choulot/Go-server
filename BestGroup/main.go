@@ -55,7 +55,7 @@ func main() {
 		}
 		context := infos{
 			Version:         Version,
-			Nodes:           GetNodes(),
+			Nodes:           GetNodes(user.Files_permissions),
 			Rights:          user.Rights,
 			UserAdditionTkn: utk,
 		}
@@ -98,16 +98,18 @@ func main() {
 	})
 
 	//init the json_handler package
-	InitJSON("end-nodes.json", true)
-	InitJSON("registeredUsers.json", false)
+	InitJSON("registeredUsers.json", 1)
+	InitJSON("end-nodes.json", 2)
+	for _, nodeFile := range NodesFiles.EndNodes {
+		InitJSON("./nodes/"+nodeFile.FileHash+".json", 0)
+	}
 	backup()
 	AuthSupport()
 	http.HandleFunc("/webhooks/post", PostService)
 	http.HandleFunc("/api/downlink", DownLink)
 	http.HandleFunc("/api/getuserinfos", GetUserInfos)
 	http.HandleFunc("/api/adduser", AddUser)
-	//handle /api/update and check if parameter "date" is set
-	ApiUpdate()
+	http.HandleFunc("/api/update/", ApiUpdate)
 
 	err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/bestiaever.ml/fullchain.pem", "/etc/letsencrypt/live/bestiaever.ml/privkey.pem", nil)
 	if err != nil {

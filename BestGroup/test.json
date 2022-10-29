@@ -1,0 +1,33 @@
+{
+    "end_device_ids": {
+        "device_id": "eui-2cf7f1202490140b",
+        "application_ids": {
+            "application_id": "signage-group-5-algosup"
+        },
+        "dev_eui": "2CF7F1202490140B",
+        "join_eui": "8000000000000006"
+    },
+    "correlation_ids": ["as:up:01GGA9D3SKP24Q2X82XYCHAGND", "rpc:/ttn.lorawan.v3.AppAs/SimulateUplink:f2637d7c-e4e5-49c9-96ff-69ab5fef902b"],
+    "received_at": "2022-10-26T13:58:42.226976794Z",
+    "uplink_message": {
+        "f_port": 1,
+        "frm_payload": "h0UAAQ==",
+        "rx_metadata": [{
+            "gateway_ids": {
+                "gateway_id": "test"
+            },
+            "rssi": 42,
+            "channel_rssi": 42,
+            "snr": 4.2
+        }],
+        "settings": {
+            "data_rate": {
+                "lora": {
+                    "bandwidth": 125000,
+                    "spreading_factor": 7
+                }
+            }
+        }
+    },
+    "simulated": true
+}

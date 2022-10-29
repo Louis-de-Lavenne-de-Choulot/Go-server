@@ -350,7 +350,7 @@ func GetNodes(ids []int) string {
 
 			//check if Nodes.Decrypted[count] exists and ID is the same
 			if len(Nodes[id].Decrypted) > count && Nodes[id].Decrypted[count].ID == node.ID {
-				str += "<span class=\"tooltiptext\">" + strconv.Itoa(Nodes[id].Decrypted[count].LEDBrightness) + " " + strconv.Itoa(Nodes[id].Decrypted[count].LEDUsage) + " " + strconv.Itoa(Nodes[id].Decrypted[count].DeadLEDs) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].IsPowered) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].ZMCTError) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].XY_MOSError) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].ACSError) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].PhotoresistorError) + " " + strconv.FormatBool(Nodes[id].Decrypted[count].RequestBackupData) + "</span>"
+				str += "<div class=\"tooltiptext\"><div class=\"tltptxt\"><ul><li>brightness %</li><li>dead LEDs %</li><li>LED usage</li><li>errors</li></ul><ul class=\"data-ul\"><li>" + strconv.Itoa(Nodes[id].Decrypted[count].LEDBrightness) + "</li><li>" + strconv.Itoa(Nodes[id].Decrypted[count].LEDUsage) + "</li><li>" + strconv.Itoa(Nodes[id].Decrypted[count].DeadLEDs) + "</li><li>" + strconv.FormatBool(Nodes[id].Decrypted[count].IsPowered) + ", " + strconv.FormatBool(Nodes[id].Decrypted[count].ZMCTError) + ", " + strconv.FormatBool(Nodes[id].Decrypted[count].XY_MOSError) + ", " + strconv.FormatBool(Nodes[id].Decrypted[count].ACSError) + ", " + strconv.FormatBool(Nodes[id].Decrypted[count].PhotoresistorError) + ", " + strconv.FormatBool(Nodes[id].Decrypted[count].RequestBackupData) + "</li></ul></div></div>"
 				count++
 			}
 

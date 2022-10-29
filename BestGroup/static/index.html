@@ -42,6 +42,8 @@
         .list-group-item {
             width: -webkit-fill-available;
             text-align: -webkit-center;
+            padding-left: 0;
+            padding-right: 0;
         }
 
         .middle {
@@ -81,6 +83,12 @@
             }
         }
 
+        .tltptxt {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
         .list-group-item .tooltiptext {
             visibility: hidden;
             width: 120px;
@@ -93,6 +101,15 @@
             /* Position the tooltip */
             position: absolute;
             z-index: 1;
+            width: max-content;
+        }
+
+        .data-ul{
+            list-style: none;
+        }
+        
+        .data-ul li::before{
+                content: "=";
         }
 
         .list-group-item:hover .tooltiptext {
@@ -119,8 +136,8 @@
     </style>
     <nav class="navbar navbar-expand-lg">
         <div>
-            <img src="https://raw.githubusercontent.com/Louis-de-Lavenne-de-Choulot/Go-server/main/BestGroup/static/images/defaultprofile.webp?token=GHSAT0AAAAAAB2N7LJ6OPVQXOJVJYGLBNUOY2ZXC4A"
-                class="logo" alt="logo" width="100%" height="100">
+            <img src="https://raw.githubusercontent.com/Louis-de-Lavenne-de-Choulot/https-louis-de-lavenne-de-choulot.github.io/main/defaultprofile.webp"
+                class="logo" alt="logo" style="max-width: 200px; max-height: 130px;" width="100%" height="100">
         </div>
         <div style="justify-content: center;">
             <a class="navbar-brand" href="https://bestiaever.ml/" style="display: flex;">
@@ -241,6 +258,7 @@
                 } else {
                     paramsString = "/?date=00&current=" + count;
                 }
+                console.log(paramsString);
                 await fetch(url + paramsString, myInit)
                     .then((response) => {
                         //get new html from response
@@ -248,9 +266,14 @@
                     })
                     .then((data) => {
                         if (data != "" || data != "parameter 'date' not set") {
+                            console.log(data);
                             if (data[0] == "<") {
+                                //remove from data <div id=\"card" + count + "\">
+                                data = data.replace("<div id=\"card" + count + "\">", "");
+                                //remove from data </div>
+                                data = data.replace("</div>", "");
                                 //get element by id "dynamic" and update content
-                                document.getElementById("dynamic").innerHTML = data;
+                                document.getElementById("card" + count).innerHTML = data;
                                 // update paramString with newest fChild id
                                 paramString = "/?date=" + document.getElementById("fChild" + count)
                                     .innerText;

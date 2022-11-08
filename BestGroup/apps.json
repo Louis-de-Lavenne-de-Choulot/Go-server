@@ -1,0 +1,20 @@
+{
+    "Apps":[
+        {
+            "ID":1,
+            "Name":"LoRaWAN Server",
+            "Version":"0.0.2",
+            "Description":"Receive your lorawan data",
+            "Author":"Louis",
+            "Link":"lora"
+        },
+        {
+            "ID":2,
+            "Name":"Schedule",
+            "Version":"0.0.1",
+            "Description":"Schedule your day and all your events",
+            "Author":"Louis",
+            "Link":"schedule"
+        }
+    ]
+}

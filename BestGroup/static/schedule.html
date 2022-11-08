@@ -1,0 +1,237 @@
+<style>
+    .schedulediv::before {
+        content: "\27A4";
+        font-size: 78px;
+        position: absolute;
+        left: 50px;
+        -webkit-transform: rotateY(180deg);
+        -moz-transform: rotateY(180deg);
+        -o-transform: rotateY(180deg);
+        -ms-transform: rotateY(180deg);
+    }
+
+    .schedulediv {
+        display: flex;
+        align-items: center;
+    }
+
+    .schedulediv::after {
+        content: "\27A4";
+        font-size: 78px;
+        position: absolute;
+        right: 50px;
+    }
+
+    .schedule {
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+    }
+
+    .col-sm {
+        display: grid;
+        align-items: start;
+        box-sizing: content-box;
+        min-width: 240px;
+        font-size: small;
+        height: 400px;
+        text-align-last: center;
+        border: 2px solid #3c3c3c;
+        border-radius: 20px;
+        margin-right: 10px;
+    }
+
+    .schedule-body {
+        cursor: help;
+        height: 180px;
+        overflow: auto;
+        padding-top: 10%;
+    }
+
+    h3 {
+        border: 2px black solid;
+        width: auto;
+        border-radius: 20px;
+    }
+
+    .btn .btn-primary {
+        z-index: 1;
+    }
+
+    .meeting {
+        color: red;
+        height: max-content;
+        height: 50px;
+        margin-bottom: 6%;
+        border-radius: 20px;
+        border: 2px solid #ff000077;
+        width: -webkit-fill-available;
+        background-color: #ff000021;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .meeting::before {
+        padding-right: 5px;
+        content: "\26A0";
+        display: flex;
+        position: absolute;
+        font-size: 26px;
+        margin-left: 16px;
+    }
+
+    .meeting h5 {
+        padding-left: 55px;
+        padding-top: 6px;
+        font-size: initial;
+    }
+
+    .info-header {
+        margin-top: 30px;
+        display: flex;
+        margin-bottom: 30px;
+        text-align-last: center;
+        justify-content: space-between;
+    }
+
+    .notif::before {
+        content: "🔔";
+    }
+
+    .notif {
+        border-radius: 20px;
+        height: 45px;
+    }
+
+    .alertdiv {
+        position: fixed;
+        right: 0px;
+        z-index: 1;
+        width: 148px;
+        font-size: 13px;
+    }
+
+    .alertdiv p {
+        border-bottom: groove;
+    }
+
+    h4 {
+        font-size: 1.5rem !important;
+    }
+</style>
+
+{{if .Days}}
+<div class="info-header">
+    <h4 style="font: revert;">Role : {{$.Role}}</h4>
+    <!-- </div> -->
+    <!-- <div style="margin-top:30px; margin-bottom:30px; 
+    text-align-last: center;
+    "> -->
+    {{if .Notifs}}
+    <div>
+        <button class="notif btn btn-outline-warning" type="button" data-toggle="collapse" data-target="#cllpse"
+            aria-expanded="false" aria-controls="cllpse">{{len .Notifs}}</button>
+        <div class="alert alert-danger alertdiv collapse" id="cllpse" role="alert">
+            {{range .Notifs}}
+            <p>{{.}}</p>
+            {{end}}
+        </div>
+    </div>
+    {{end}}
+</div>
+<div class="schedulediv">
+    <div class="container schedule" id="schedule_container">
+        {{range $I, $D := .Days}}
+        <div class="col-sm">
+            <h3>{{$D}} Monday</h3>
+            <div class="schedule-body">
+                <p>{{index $.Tasks $I}}</p>
+            </div>
+            <div class="schedule-footer">
+                <div class="meeting" {{if index $.Important $I}} style="visibility: visible;" {{else}}
+                    style="visibility: hidden;" {{end}}>
+                    <h5>{{index $.Important $I}}</h5>
+                </div>
+                <button class="btn btn-primary">Write Daily Report</button>
+            </div>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="col-sm" style="width: 50%;margin-left: 25%;">
+            <h3 id="title">Write Schedule Name</h3>
+            <div>
+                <button class="btn btn-info btn_swap">or Connect to schedule</button>
+            </div>
+            <div class="schedule-body"
+                style="display: flex;align-items: center;flex-direction: column;justify-content: space-around;cursor: auto;padding-top: 0;">
+                <input type="text" id="dbname" placeholder="DB Name">
+                <input type="text" id="dbusers" style="width:50%;"
+                    placeholder="Users (github identifiers)ex: Jacque,Lilla_bracket,Bernad-genius">
+            </div>
+            <div class="schedule-footer">
+                <button class="btn btn-primary btn_submit">Submit</button>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+<script>
+    let swit = false;
+    $(document).ready(function () {
+        $(".btn_swap").click(function () {
+            swit = !swit;
+            if (swit) {
+                $(".btn_swap").text("or Create new schedule");
+                $("#dbusers").css("visibility", "hidden");
+                $(".btn_submit").text("Connect");
+            } else {
+                $(".btn_swap").text("or Connect to schedule");
+                $("#dbusers").css("visibility", "visible");
+                $(".btn_submit").text("Add");
+            }
+
+        });
+        $(".btn_submit").click(function () {
+            var dbname = $("#dbname").val();
+            var dbusers = $("#dbusers").val();
+            if (!swit) {
+                //remove spaces
+                dbusers = dbusers.replace(/\s/g, '');
+                // use fetch and post to /api/NewSchedule
+                fetch("/api/newschedule/" + "?dbname=" + dbname + "&dbusers=" + dbusers, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "text/plain"
+                    }
+                }).then(function (response) {
+                    let rt = response.text();
+                    if (response.ok && rt != "") {
+                        document.getElementById("schedule_container").innerHTML = rt;
+                    } else {
+                        console.log(rt);
+                        console.log(response.status);
+                    }
+                });
+            } else {
+                // use fetch and post to /api/GetSchedule
+                fetch("/api/getschedule/" + "?dbname=" + dbname, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain"
+                    }
+                }).then(function (response) {
+                    let rt = response.text();
+                    if (response.ok && rt != "") {
+                        document.getElementById("schedule_container").innerHTML = rt;
+                    } else {
+                        console.log("error fetching schedule");
+                    }
+                });
+            }
+        });
+    });
+</script>

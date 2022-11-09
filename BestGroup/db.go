@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -21,12 +20,17 @@ const (
 	port     = 5432
 	puser    = "postgres"
 	password = "#PostgresDatabase"
-	dbname   = "Schedule"
+	dbname   = "schedule"
 )
 
 var (
 	db *sql.DB
 )
+
+type DBUsers struct {
+	role  string
+	users []int
+}
 
 func NewDB() {
 
@@ -91,14 +95,13 @@ func CreateTable(dbName string, dbusers string) string {
 		loganswer("Error in query")
 		return "Error in query"
 	}
-	statement = "CREATE TABLE " + name + "_users (id SERIAL PRIMARY KEY, username VARCHAR (100) UNIQUE NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP NOT NULL);"
+	statement = "CREATE TABLE " + name + "_accounts (id SERIAL PRIMARY KEY, username VARCHAR (100) UNIQUE NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP NOT NULL);"
 	db.Query(statement)
-	statement = "INSERT INTO " + name + "_users (username, created_on, last_login) VALUES "
 	splited := strings.Split(dbusers, ",")
-	for numb := range splited {
-		statement += "( $" + strconv.FormatInt(int64(numb), 32) + "," + time.Now().String() + "," + time.Now().String() + ")"
+	for _, split := range splited {
+		statement = "INSERT INTO " + name + "_accounts (username, created_on, last_login) VALUES ( $1," + time.Now().String() + "," + time.Now().String() + ")"
+		db.Query(statement, split)
 	}
-	db.Query(statement, splited)
 
 	return ""
 }
@@ -129,7 +132,44 @@ func GetTable(name string, user string) string {
 			return "no schedule found"
 		}
 	}
-	return schedule
+	statement = "SELECT username FROM " + schedule + " WHERE username=$1"
+	rows, err = db.Query(statement, user)
+	if err != nil {
+		loganswer("Error in query")
+		return "Error in query"
+	}
+	defer rows.Close()
+	var username string
+	for rows.Next() {
+		err = rows.Scan(&username)
+		if err != nil {
+			loganswer("no schedule found")
+			return "no schedule found"
+		}
+	}
+	if username == "" {
+		return "User is not in the schedule"
+	}
+	//get all informations from the schedule in one string
+	statement = "SELECT * FROM " + schedule
+	rows, err = db.Query(statement)
+	if err != nil {
+		loganswer("Error in query")
+		return "Error in query"
+	}
+	defer rows.Close()
+	var id int
+	var tasks string
+	var roles string
+	var reports string
+	for rows.Next() {
+		err = rows.Scan(&id, &tasks, &roles, &reports)
+		if err != nil {
+			loganswer("no schedule found")
+			return "no schedule found"
+		}
+	}
+	return tasks + roles + reports
 }
 
 func CheckExist(name string) bool {

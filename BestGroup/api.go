@@ -200,9 +200,14 @@ func GetSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//read the lora.html file then serve it
+	templates.New("insideSchedule").Parse(readfile(pwd + "/static/insideSchedule.html"))
+
 	//get schedule from database
 	towrite := GetTable(r.URL.Query().Get("dbname"), user.Gthb_identifier)
-	w.Write([]byte(towrite))
+
+	templates.ExecuteTemplate(w, "insideSchedule", towrite)
+
 	loganswer("schedule sent")
 }
 

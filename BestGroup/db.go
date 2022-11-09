@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -27,9 +28,26 @@ var (
 	db *sql.DB
 )
 
-type DBUsers struct {
-	role  string
-	users []int
+type DBRole struct {
+	Role  string
+	Users []int
+}
+
+type DBReport struct {
+	Date   string
+	Report []DBRepContent
+}
+
+type DBRepContent struct {
+	Name    string
+	Role    string
+	Content string
+}
+
+type MainDB struct {
+	Tasks   []DBReport
+	Roles   []DBRole
+	Reports []DBReport
 }
 
 func NewDB() {
@@ -106,15 +124,15 @@ func CreateTable(dbName string, dbusers string) string {
 	return ""
 }
 
-func GetTable(name string, user string) string {
+func GetTable(name string, user string) MainDB {
 	if !CheckExist(name) {
-		return "Schedule does not exist"
+		return MainDB{}
 	}
 	statement := "SELECT schedule, additional_key FROM schedules"
 	rows, err := db.Query(statement)
 	if err != nil {
 		loganswer("Error in query")
-		return "Error in query"
+		return MainDB{}
 	}
 	defer rows.Close()
 	var schedule string
@@ -129,14 +147,14 @@ func GetTable(name string, user string) string {
 		}
 		if err != nil {
 			loganswer("no schedule found")
-			return "no schedule found"
+			return MainDB{}
 		}
 	}
 	statement = "SELECT username FROM " + schedule + " WHERE username=$1"
 	rows, err = db.Query(statement, user)
 	if err != nil {
 		loganswer("Error in query")
-		return "Error in query"
+		return MainDB{}
 	}
 	defer rows.Close()
 	var username string
@@ -144,32 +162,36 @@ func GetTable(name string, user string) string {
 		err = rows.Scan(&username)
 		if err != nil {
 			loganswer("no schedule found")
-			return "no schedule found"
+			return MainDB{}
 		}
 	}
 	if username == "" {
-		return "User is not in the schedule"
+		return MainDB{}
 	}
 	//get all informations from the schedule in one string
 	statement = "SELECT * FROM " + schedule
 	rows, err = db.Query(statement)
 	if err != nil {
 		loganswer("Error in query")
-		return "Error in query"
+		return MainDB{}
 	}
 	defer rows.Close()
-	var id int
-	var tasks string
-	var roles string
-	var reports string
+	var tasks []byte
+	var roles []byte
+	var reports []byte
 	for rows.Next() {
-		err = rows.Scan(&id, &tasks, &roles, &reports)
+		err = rows.Scan(&tasks, &roles, &reports)
 		if err != nil {
 			loganswer("no schedule found")
-			return "no schedule found"
+			return MainDB{}
 		}
 	}
-	return tasks + roles + reports
+	var jsonData MainDB
+
+	json.Unmarshal(tasks, &jsonData.Tasks)
+	json.Unmarshal(roles, &jsonData.Roles)
+	json.Unmarshal(reports, &jsonData.Reports)
+	return jsonData
 }
 
 func CheckExist(name string) bool {

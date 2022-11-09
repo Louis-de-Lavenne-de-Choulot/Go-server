@@ -1,0 +1,293 @@
+<style>
+    .list-group-item {
+        width: -webkit-fill-available;
+        text-align: -webkit-center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .middle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .popup {
+        width: 50%;
+        height: 50%;
+        z-index: 1;
+        display: flex;
+        background-color: aliceblue;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #popup-info {
+        top: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-color: rgba(255, 255, 255, 0.886);
+    }
+
+    @media (max-width: 968px) {
+        .card {
+            overflow: auto;
+        }
+
+        .card-body {
+            display: flex
+        }
+    }
+
+    .tltptxt {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .list-group-item .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: rgb(227, 227, 227);
+        color: rgb(58, 58, 58);
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        width: max-content;
+    }
+
+    .data-ul {
+        list-style: none;
+    }
+
+    .data-ul li::before {
+        content: "=";
+    }
+
+    .list-group-item:hover .tooltiptext {
+        visibility: visible;
+    }
+
+    .admin-side {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+
+    .admin-form {
+        display: grid;
+        justify-items: center;
+    }
+
+    .form_style {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+<div id="popup-info">
+    <div class="middle popup">
+        <h3>Reminder: A session last 30 minutes</h3>
+        <button onclick="document.getElementById('popup-info').style.display = 'none'"
+            class="btn btn-primary">Close</button>
+    </div>
+</div>
+
+<div style="text-align: -webkit-center;">
+    <h1>APP-SOLU</h1>
+    <p>App-Solu is a web application that allows you to manage your projects and tasks.</p>
+    {{if ge .Rights 1}}
+
+    <h4>Use the form below to send to devices</h4>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#cllpse" aria-expanded="false"
+        aria-controls="cllpse">
+        Send data
+    </button>
+
+    <div class="collapse" id="cllpse">
+        <h6>If you never sent data to the server, please fill the optional fields "app id" and "device id"</h6>
+        <form action="/api/downlink" method="POST" class="form_style">
+            <label for="frm_payload">Payload <strong style="color: red;">*</strong></label>
+            <input type="text" name="frm_payload" id="frm_payload">
+            <label for="f_port">Port <strong style="color: red;">*</strong></label>
+            <input type="text" name="f_port" id="f_port">
+            <label for="priority">Priority <strong style="color: red;">*</strong></label>
+            <input type="text" name="priority" id="priority">
+            <label for="app_id">App ID</label>
+            <input type="text" name="app_id" id="app_id">
+            <label for="dev_id">Dev ID</label>
+            <input type="text" name="dev_id" id="dev_id">
+            <label for="current" style="display: none">Current</label>
+            <input type="text" name="current" id="current" style="display: none;">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    {{end}}
+</div>
+<div style="max-width: -webkit-fill-available;">
+    <!-- add two buttons with id btn-next and btn-previous-->
+    <div style="justify-content:center">
+        <button id="btn-previous" class="btn btn-primary">Previous</button>
+        <button id="btn-next" class="btn btn-primary">Next</button>
+    </div>
+    <div class="row" style="justify-content: center;">
+        <div class="col-sm-10" style="height: max-content;">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="list-group">
+                        <ul class="list-group list-group-horizontal" style="justify-content: center;">
+                            <li class="list-group-item" style="min-width: 56px;width: 56px;">id</li>
+                            <li class="list-group-item">received_at</li>
+                            <li class="list-group-item">application_id</li>
+                            <li class="list-group-item">device_id</li>
+                            <li class="list-group-item">port,message</li>
+                            <li class="list-group-item">simulated data</li>
+                        </ul>
+                        <ul style="padding:0" id="dynamic">
+                            {{.Nodes}}
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{if eq .Rights 777}}
+<div class="admin-side">
+    <h2>Hello Admin</h2>
+    <form class="admin-form" action="/api/adduser" method="POST" style="display: grid;">
+        <div>
+            <label for="github_identifier">Github Identifier to add </label>
+            <input type="text" name="github_identifier" id="github_identifier">
+        </div>
+        <div>
+            <label for="rights">User rights</label>
+            <input type="text" name="rights" id="rights" value="0">
+        </div>
+        <input type="text" style="display: none;" name="user_addition_token" value="C6AWX40IVUWSP3NcHciWvqZTa3N06RxR">
+        <input type="submit" value="Submit">
+    </form>
+
+</div>
+
+{{end}}
+<script>
+    var count = 0;
+    async function updateRequest(url) {
+        var paramsString = "";
+        var myHeaders = new Headers();
+        var myInit = {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'cors',
+            cache: 'default',
+        };
+        setTimeout(async function () {
+            if (document.getElementById("fChild" + count) != undefined) {
+                paramsString = "/?date=" + document.getElementById("fChild" + count).innerText +
+                    "&current=" + count;
+            } else {
+                paramsString = "/?date=00&current=" + count;
+            }
+            console.log(paramsString);
+            await fetch(url + paramsString, myInit)
+                .then((response) => {
+                    //get new html from response
+                    return response.text();
+                })
+                .then((data) => {
+                    if (data != "" || data != "parameter 'date' not set") {
+                        console.log(data);
+                        if (data[0] == "<") {
+                            //remove from data <div id=\"card" + count + "\">
+                            data = data.replace("<div id=\"card" + count + "\">", "");
+                            //remove from data </div>
+                            data = data.replace("</div>", "");
+                            //get element by id "dynamic" and update content
+                            document.getElementById("card" + count).innerHTML = data;
+                            // update paramString with newest fChild id
+                            paramString = "/?date=" + document.getElementById("fChild" + count)
+                                .innerText;
+                        }
+                    }
+                })
+            updateRequest(url);
+        }, 2000);
+    }
+
+    if (window.fetch) {
+
+        let a = 0;
+        //display none all id="card" + count different from count
+        while (document.getElementById("card" + a) != null) {
+            if (a == count) {
+                document.getElementById("card" + a).style.display = "block";
+            } else {
+                document.getElementById("card" + a).style.display = "none";
+            }
+            a++;
+        }
+        document.getElementById("current").value = count;
+
+        const callURL = '/api/update';
+        updateRequest(callURL);
+        console.log("fetch supported");
+    }
+
+    //add event listener to button with id "btn-next"
+    document.getElementById("btn-next").addEventListener("click", function () {
+        count++;
+
+        try {
+            document.getElementById("fChild" + count).innerText;
+        } catch (err) {
+            count--;
+        }
+        let i = 0;
+        //display none all id="card" + count different from count
+        while (document.getElementById("card" + i) != null) {
+            if (i == count) {
+                document.getElementById("card" + i).style.display = "block";
+            } else {
+                document.getElementById("card" + i).style.display = "none";
+            }
+            i++;
+        }
+        b = "/?date=" + document.getElementById("fChild" + count).innerText;
+        document.getElementById("current").value = count;
+    });
+
+    //add event listener to button with id "btn-next"
+    document.getElementById("btn-previous").addEventListener("click", function () {
+        count--;
+
+        try {
+            document.getElementById("fChild" + count).innerText;
+        } catch (err) {
+            count++;
+        }
+        let i = 0;
+        //display none all id="card" + count different from count
+        while (document.getElementById("card" + i) != null) {
+            if (i == count) {
+                document.getElementById("card" + i).style.display = "block";
+            } else {
+                document.getElementById("card" + i).style.display = "none";
+            }
+            i++;
+        }
+
+        paramString = "/?date=" + document.getElementById("fChild" + count).innerText;
+        document.getElementById("current").value = count;
+    });
+</script>

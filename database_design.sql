@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS ###hash###(
 	id serial PRIMARY KEY,
 	tasks json NOT NULL,
 	roles json NOT NULL,
-	report json NOT NULL
+	report json NOT NULL,
+	notifs json NOT NULL
 )
 
 CREATE TABLE IF NOT EXISTS ###hash###_accounts(

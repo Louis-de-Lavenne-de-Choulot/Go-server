@@ -34,8 +34,9 @@ type DBRole struct {
 }
 
 type DBReport struct {
-	Date   string
-	Report []DBRepContent
+	Date      string
+	Report    []DBRepContent
+	Important string
 }
 
 type DBRepContent struct {
@@ -48,6 +49,7 @@ type MainDB struct {
 	Tasks   []DBReport
 	Roles   []DBRole
 	Reports []DBReport
+	Notifs  []string
 }
 
 func NewDB() {
@@ -106,7 +108,7 @@ func CreateTable(dbName string, dbusers string) string {
 	db.Query(statement, dbName)
 	//reduce name to 62 characters and remove 10 characters from the beginning
 	name = name[10:72]
-	statement = "CREATE TABLE " + name + " (id SERIAL PRIMARY KEY, tasks json NOT NULL, roles json NOT NULL, reports JSON NOT NULL);"
+	statement = "CREATE TABLE " + name + " (id SERIAL PRIMARY KEY, tasks json NOT NULL, roles json NOT NULL, reports JSON NOT NULL, notifs text[]);"
 	_, err := db.Query(statement)
 	if err != nil {
 		println(err.Error())

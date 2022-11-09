@@ -18,16 +18,16 @@
 </div>
 <div class="schedulediv">
     <div class="container schedule" id="schedule_container">
-        {{range $I, $D := .Days}}
+        {{range $D := .Tasks}}
         <div class="col-sm">
-            <h3>{{$D}} Monday</h3>
+            <h3>{{$D.Date}} Monday</h3>
             <div class="schedule-body">
-                <p>{{index $.Tasks $I}}</p>
+                <p>{{$D.Report.Content}}</p>
             </div>
             <div class="schedule-footer">
-                <div class="meeting" {{if index $.Important $I}} style="visibility: visible;" {{else}}
+                <div class="meeting" {{if $D.Important}} style="visibility: visible;" {{else}}
                     style="visibility: hidden;" {{end}}>
-                    <h5>{{index $.Important $I}}</h5>
+                    <h5>{{$D.Important}}</h5>
                 </div>
                 <button class="btn btn-primary">Write Daily Report</button>
             </div>

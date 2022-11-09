@@ -169,9 +169,15 @@ func NewSchedule(w http.ResponseWriter, r *http.Request) {
 		loganswer("dbname not set")
 		return
 	}
+	var users string
+	if r.URL.Query().Get("dbusers") != "" {
+		users = r.URL.Query().Get("dbusers") + "," + user.Gthb_identifier
+	} else {
+		users = r.URL.Query().Get("dbusers")
+	}
 
 	//create new schedule in database
-	towrite := CreateTable(r.URL.Query().Get("dbname"), r.URL.Query().Get("dbusers")+","+user.Gthb_identifier)
+	towrite := CreateTable(r.URL.Query().Get("dbname"), users)
 	w.Write([]byte(towrite))
 	loganswer("new schedule created")
 }

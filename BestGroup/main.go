@@ -17,7 +17,7 @@ const Version = "0.2"
 var (
 	// db                *sql.DB
 	// connStr                  = "postgresql://goupb:<password>@<database_ip>/todos?sslmode=enabled"
-	pwd               string = "."
+	pwd               string = "/home/groupb/Documents/BestGroup"
 	logfile           string = pwd + "/server.log"
 	logmutex          sync.Mutex
 	UserAdditionToken = make(map[int]string)

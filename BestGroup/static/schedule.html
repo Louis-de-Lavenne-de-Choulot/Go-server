@@ -1,3 +1,4 @@
+
 <style>
     .schedulediv::before {
         content: "\27A4";
@@ -123,44 +124,7 @@
         font-size: 1.5rem !important;
     }
 </style>
-
-{{if .Days}}
-<div class="info-header">
-    <h4 style="font: revert;">Role : {{$.Role}}</h4>
-    <!-- </div> -->
-    <!-- <div style="margin-top:30px; margin-bottom:30px; 
-    text-align-last: center;
-    "> -->
-    {{if .Notifs}}
-    <div>
-        <button class="notif btn btn-outline-warning" type="button" data-toggle="collapse" data-target="#cllpse"
-            aria-expanded="false" aria-controls="cllpse">{{len .Notifs}}</button>
-        <div class="alert alert-danger alertdiv collapse" id="cllpse" role="alert">
-            {{range .Notifs}}
-            <p>{{.}}</p>
-            {{end}}
-        </div>
-    </div>
-    {{end}}
-</div>
-<div class="schedulediv">
-    <div class="container schedule" id="schedule_container">
-        {{range $I, $D := .Days}}
-        <div class="col-sm">
-            <h3>{{$D}} Monday</h3>
-            <div class="schedule-body">
-                <p>{{index $.Tasks $I}}</p>
-            </div>
-            <div class="schedule-footer">
-                <div class="meeting" {{if index $.Important $I}} style="visibility: visible;" {{else}}
-                    style="visibility: hidden;" {{end}}>
-                    <h5>{{index $.Important $I}}</h5>
-                </div>
-                <button class="btn btn-primary">Write Daily Report</button>
-            </div>
-        </div>
-        {{end}}
-        {{else}}
+<div id="container">
         <div class="col-sm" style="width: 50%;margin-left: 25%;">
             <h3 id="title">Write Schedule Name</h3>
             <div>
@@ -168,6 +132,12 @@
             </div>
             <div class="schedule-body"
                 style="display: flex;align-items: center;flex-direction: column;justify-content: space-around;cursor: auto;padding-top: 0;">
+                <div><label for="start">Start date:</label>
+
+                    <input type="date" id="start" name="trip-start" value={{.Date}}><label for="start">Start
+                        date:</label>
+
+                    <input type="date" id="start" name="trip-start" value={{.Date}}> </div>
                 <input type="text" id="dbname" placeholder="DB Name">
                 <input type="text" id="dbusers" style="width:50%;"
                     placeholder="Users (github identifiers)ex: Jacque,Lilla_bracket,Bernad-genius">
@@ -176,9 +146,7 @@
                 <button class="btn btn-primary btn_submit">Submit</button>
             </div>
         </div>
-        {{end}}
-    </div>
-</div>
+        </div>
 <script>
     let swit = false;
     $(document).ready(function () {
@@ -210,7 +178,7 @@
                 }).then(function (response) {
                     let rt = response.text();
                     if (response.ok && rt != "") {
-                        document.getElementById("schedule_container").innerHTML = rt;
+                        document.getElementById("container").innerHTML = rt;
                     } else {
                         console.log(rt);
                         console.log(response.status);
@@ -226,7 +194,7 @@
                 }).then(function (response) {
                     let rt = response.text();
                     if (response.ok && rt != "") {
-                        document.getElementById("schedule_container").innerHTML = rt;
+                        document.getElementById("container").innerHTML = rt;
                     } else {
                         console.log("error fetching schedule");
                     }

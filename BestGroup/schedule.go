@@ -1,15 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type schedule struct {
-	Title     string
-	Version   string
-	Days      []int
-	Role      string
-	Tasks     []string
-	Notifs    []string
-	Important []string
+	Title   string
+	Version string
+	Date    string
 }
 
 func Schedule(w http.ResponseWriter, r *http.Request) {
@@ -23,13 +22,9 @@ func Schedule(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content Type", "text/html")
 
 	contextSc := schedule{
-		Title:     "Schedule",
-		Version:   Version,
-		Days:      []int{}, //31, 1, 2, 3, 4, 5, 6},
-		Role:      "Project Manager",
-		Tasks:     []string{}, //"Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"},
-		Notifs:    []string{"Project Begins", "Ivan has finished the technical"},
-		Important: []string{"", "Finish Technical", "", "", "", "", "End of Week Meeting"},
+		Title:   "Schedule",
+		Version: Version,
+		Date:    time.Now().Format("2006-01-02"),
 	}
 
 	servTemplates(w, []string{"schedule"}, contextSc)

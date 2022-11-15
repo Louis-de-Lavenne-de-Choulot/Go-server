@@ -91,8 +91,7 @@ func QueryDB(query string) string {
 
 func CreateTable(dbName string, dbusers string) string {
 	name, extkey := Encrypt(dbName)
-	statement := `
-	INSERT INTO schedules (schedule, starting_date, ending_date, created_on, additional_key) VALUES($1,$2,$3,$4,$5)`
+	statement := `INSERT INTO schedules (schedule, starting_date, ending_date, created_on, additional_key) VALUES($1,$2,$3,$4,$5)`
 	// sT, err := time.Parse("", "")
 	// if err != nil {
 	// 	loganswer("Wrong time typo starting time")
@@ -103,24 +102,34 @@ func CreateTable(dbName string, dbusers string) string {
 	// 	loganswer("Wrong time typo ending time")
 	// 	return "Wrong time typo ending time"
 	// }
-	db.Query(statement, name, time.Now(), time.Now(), time.Now(), extkey)
+	_, err := db.Query(statement, name, time.Now(), time.Now(), time.Now(), extkey)
+	if err != nil {
+
+		loganswer("Error in query add name to schedules " + err.Error())
+		return "Error in query"
+	}
 	statement = "INSERT INTO schedules_names (schedule) VALUES($1)"
-	db.Query(statement, dbName)
+	_, err = db.Query(statement, dbName)
+	if err != nil {
+
+		loganswer("Error in query add name to list " + err.Error())
+		return "Error in query"
+	}
 	//reduce name to 62 characters and remove 10 characters from the beginning
 	name = name[10:72]
 	statement = "CREATE TABLE " + name + " (id SERIAL PRIMARY KEY, tasks json NOT NULL, roles json NOT NULL, reports JSON NOT NULL, notifs text[]);"
-	_, err := db.Query(statement)
-	if err != nil {
-		println(err.Error())
-		loganswer("Error in query")
-		return "Error in query"
-	}
+	db.Query(statement)
 	statement = "CREATE TABLE " + name + "_accounts (id SERIAL PRIMARY KEY, username VARCHAR (100) UNIQUE NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP NOT NULL);"
 	db.Query(statement)
 	splited := strings.Split(dbusers, ",")
 	for _, split := range splited {
 		statement = "INSERT INTO " + name + "_accounts (username, created_on, last_login) VALUES ( $1," + time.Now().String() + "," + time.Now().String() + ")"
-		db.Query(statement, split)
+		_, err = db.Query(statement, split)
+		if err != nil {
+
+			loganswer("Error in adding to accounts " + err.Error())
+			return "Error in query"
+		}
 	}
 
 	return ""
@@ -133,7 +142,7 @@ func GetTable(name string, user string) MainDB {
 	statement := "SELECT schedule, additional_key FROM schedules"
 	rows, err := db.Query(statement)
 	if err != nil {
-		loganswer("Error in query")
+		loganswer("fetching schedules failed")
 		return MainDB{}
 	}
 	defer rows.Close()
@@ -143,7 +152,7 @@ func GetTable(name string, user string) MainDB {
 		err = rows.Scan(&schedule, &key)
 		if len(key)+len(name) == 32 {
 			final, finalkey := Encrypt(name)
-			if final == schedule && finalkey == key {
+			if final[10:72] == schedule && finalkey == key {
 				break
 			}
 		}
@@ -155,7 +164,7 @@ func GetTable(name string, user string) MainDB {
 	statement = "SELECT username FROM " + schedule + " WHERE username=$1"
 	rows, err = db.Query(statement, user)
 	if err != nil {
-		loganswer("Error in query")
+		loganswer("getting username failed")
 		return MainDB{}
 	}
 	defer rows.Close()
@@ -174,7 +183,7 @@ func GetTable(name string, user string) MainDB {
 	statement = "SELECT * FROM " + schedule
 	rows, err = db.Query(statement)
 	if err != nil {
-		loganswer("Error in query")
+		loganswer("selecting chedule failed")
 		return MainDB{}
 	}
 	defer rows.Close()
@@ -200,7 +209,7 @@ func CheckExist(name string) bool {
 	statement := "SELECT * FROM schedules_names WHERE schedule=$1"
 	rows, err := db.Query(statement, name)
 	if err != nil {
-		loganswer("Error in query")
+		loganswer("Query schedules name failed")
 		return false
 	}
 	defer rows.Close()
@@ -208,7 +217,7 @@ func CheckExist(name string) bool {
 	for rows.Next() {
 		err = rows.Scan(&schedule)
 		if err != nil {
-			loganswer("Error in query")
+			loganswer("scanning schedule names, no schedule")
 			return false
 		}
 	}

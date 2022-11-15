@@ -177,10 +177,10 @@
                     }
                 }).then(function (response) {
                     let rt = response.text();
+                    console.log(rt);
                     if (response.ok && rt != "") {
                         document.getElementById("container").innerHTML = rt;
                     } else {
-                        console.log(rt);
                         console.log(response.status);
                     }
                 });

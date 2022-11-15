@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ###hash###(
 	tasks json NOT NULL,
 	roles json NOT NULL,
 	report json NOT NULL,
-	notifs json NOT NULL
+	notifs text[] NOT NULL
 )
 
 CREATE TABLE IF NOT EXISTS ###hash###_accounts(

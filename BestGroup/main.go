@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"encoding/base64"
 	"encoding/hex"
 	"io"
@@ -22,7 +23,6 @@ var (
 	logmutex          sync.Mutex
 	UserAdditionToken = make(map[int]string)
 	templates         *template.Template
-	user              User = User{Id: 0, Username: "admin", Gthb_identifier: "admin", Avatar_url: "https://avatars3.githubusercontent.com/u/14101776?v=3&s=460", Rights: 1, Files_permissions: []int{0}}
 )
 
 type infos struct {
@@ -34,32 +34,41 @@ type infos struct {
 	UserAdditionTkn string
 }
 
+//go:embed registeredUsers.json
+var registeredUsers []byte
+
+//go:embed apps.json
+var apps []byte
+
+//go:embed end-nodes.json
+var ende []byte
+
+//go:embed nodes
+var nodesF embed.FS
+
+//go:embed static
+var fs embed.FS
+
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	NewDB()
+	//	NewDB()
 
-	templates = template.New("index.html")
-	//create new template that contains header.html and footer.html
-	templates.New("header").Parse(readfile(pwd + "/static/header.html"))
-	templates.New("footer").Parse(readfile(pwd + "/static/footer.html"))
-	//read the index.html file then serve it
-	templates.New("index").Parse(readfile(pwd + "/static/index.html"))
-	//read the lora.html file then serve it
-	templates.New("lora").Parse(readfile(pwd + "/static/lora.html"))
-	//read the auth.html file then serve it
-	templates.New("auth").Parse(readfile(pwd + "/static/auth.html"))
-	//read the refused.html file then serve it
-	templates.New("refused").Parse(readfile(pwd + "/static/refused.html"))
-	//read the schedule.html file then serve it
-	templates.New("schedule").Parse(readfile(pwd + "/static/schedule.html"))
+	listFiles := []string{"header", "footer", "index", "lora", "auth", "refused", "schedule"}
 
-	//init the json_handler package
+	templates = template.New("html templates")
+	//create new template that contains the listed file
+	for _, file := range listFiles {
+		r, _ := fs.ReadFile("static/" + file + ".html")
+		templates.New(file).Parse(string(r))
+	}
+
 	InitJSON(pwd+"/registeredUsers.json", 1)
 	InitJSON(pwd+"/end-nodes.json", 2)
 	InitJSON(pwd+"/apps.json", 3)
 	for _, nodeFile := range NodesFiles.EndNodes {
 		InitJSON(pwd+"/nodes/"+nodeFile.FileHash+".json", 0)
 	}
+
 	backup()
 	AuthSupport()
 	//handle / and give index.html
@@ -77,6 +86,11 @@ func main() {
 	http.HandleFunc("/api/getschedule/", GetSchedule)
 	http.HandleFunc("/api/update/", ApiUpdate)
 	http.HandleFunc("/favicon.ico", Favicon)
+	println("Server started on port https")
+	// directly redirect with func
+	go http.ListenAndServe(":http", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+	}))
 	err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/bestiaever.ml/fullchain.pem", "/etc/letsencrypt/live/bestiaever.ml/privkey.pem", nil)
 	// err := http.ListenAndServe(":8080", nil)
 	if err != nil {

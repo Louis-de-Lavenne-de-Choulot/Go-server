@@ -19,3 +19,5 @@
 
 # Go workspace file
 go.work
+# ignore all ds_store files
+.DS_Store

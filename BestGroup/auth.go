@@ -36,7 +36,7 @@ func AuthSupport() {
 		// Next, lets for the HTTP request to call the github oauth enpoint
 		// to get our access token
 		reqURL := fmt.Sprintf("https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, code)
-		req, err := http.NewRequest(http.MethodPost, reqURL, nil)
+		req, err := http.NewRequest(http.MethodGet, reqURL, nil)
 		if err != nil {
 			fmt.Fprintf(os.Stdout, "could not create HTTP request: %v", err)
 			w.WriteHeader(http.StatusBadRequest)

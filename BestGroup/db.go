@@ -118,6 +118,15 @@ func CreateTable(dbName string, dbusers string) string {
 	//reduce name to 62 characters and remove 10 characters from the beginning
 	name = name[10:72]
 	statement = "CREATE TABLE " + name + " (id SERIAL PRIMARY KEY, tasks json NOT NULL, roles json NOT NULL, reports JSON NOT NULL, notifs text[]);"
+	_, err = db.Query(statement)
+	if err != nil {
+
+		loganswer("Error in query create table of {{name}} " + err.Error())
+		return "Error in query"
+	}
+	//reduce name to 62 characters and remove 10 characters from the beginning
+	name = name[10:72]
+	statement = "CREATE TABLE " + name + " (id SERIAL PRIMARY KEY, tasks json NOT NULL, roles json NOT NULL, reports JSON NOT NULL, notifs text[]);"
 	db.Query(statement)
 	statement = "CREATE TABLE " + name + "_accounts (id SERIAL PRIMARY KEY, username VARCHAR (100) UNIQUE NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP NOT NULL);"
 	db.Query(statement)
